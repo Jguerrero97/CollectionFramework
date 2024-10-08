@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalDouble;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Hello world!
@@ -168,7 +170,7 @@ public class App {
                         .build());
 
         // Agregar un empleado
-           elementosVarios.add(
+        elementosVarios.add(
                 Empleado.builder()
                         .nombre("Elli")
                         .genero(Genero.MUJER)
@@ -177,13 +179,13 @@ public class App {
                         .build());
 
         // Agregar un empleado
-                 elementosVarios.add(
-                        Empleado.builder()
-                                .nombre("Maria")
-                                .genero(Genero.MUJER)
-                                .departamento(Departamento.FINANZAS)
-                                .salario(3600.50)
-                                .build());
+        elementosVarios.add(
+                Empleado.builder()
+                        .nombre("Maria")
+                        .genero(Genero.MUJER)
+                        .departamento(Departamento.FINANZAS)
+                        .salario(3600.50)
+                        .build());
 
         // Agrear un estudiante
         elementosVarios.add(
@@ -300,23 +302,73 @@ public class App {
          * del genero MUJER
          */
         // Hay que crear o instanciar un objeto de la clase Filtro
-       // Filtro filtro = new Filtro();
+        // Filtro filtro = new Filtro();
+        // elementosVarios.stream().filter(filtro)
+        // El tipo Optional es una cajita donde puede venir el resultado o null, por tanto
+        // te protege del NullPointerException
+        // OptionalDouble optionalDeSalario = elementosVarios.stream()
+        //        .filter(new Filtro()).mapToDouble(new Mapeador()).average();
+        //double salarioPromedio;
+        // if (optionalDeSalario.isPresent()) {
+        //     salarioPromedio = optionalDeSalario.getAsDouble();
+        // }
 
-       // elementosVarios.stream().filter(filtro)
+        /* ¿Que es una clase Anonima? Es una expresion de clase. Es un tipo de clase que se declara y se 
+        instancia en el mismo sitio donde se va a consumir. Por lo general se utiliza para implementar 
+        interfaces aunque tambien se puede utilizar a partir de clases. */
 
-       // El tipo Optional es una cajita donde puede venir el resultado o null, por tanto
-       // te protege del NullPointerException
+ /* Ejemplo:
+        * 
+        * Para ver la sintaxis: Consideremos la Interfaz Saludo
+         */
+        Saludo saludo = new Saludo() {
 
-      OptionalDouble optionalDeSalario = elementosVarios.stream()
-                .filter(new Filtro()).mapToDouble(new Mapeador()).average();
-       
-                double salarioPromedio;
+            private String nombre;
+
+            @Override
+            public void hola(String nombre) {
+                this.nombre = nombre;
+                System.out.println("Hola" + this.nombre);
+            }
+
+        };
+
+        saludo.hola("Ruben");
+
+        /* Ejercicio # 1
+         * 
+        * Solucionar el ejemplo de calcular el salario promedio de los 
+        * empleados del genero MUJER, utilizando clases anonimas para implementar
+        * las interfaces funcionales que requieren los metodos filter y mapToDouble, 
+        * es decir, no utilizar las clase Filtro y Mapeador
+        * 
+         */
+        
+         OptionalDouble optionaldeSalario = elementosVarios.stream()
+         .filter(new Predicate<Object>() {
+
+                @Override
+                public boolean test(Object obj) {
+          
+                return obj instanceof  Empleado empleado && 
+                empleado.getGenero(). equals(Genero.MUJER) ;
+
+                }
                 
-                if(optionalDeSalario.isPresent())
-                        salarioPromedio = optionalDeSalario.getAsDouble();
-              
+         }).mapToDouble(new ToDoubleFunction<Object>() {
 
+                @Override
+                public double applyAsDouble(Object obj) {
+                        Empleado empleado = (Empleado) obj;
+                        return empleado.getSalario();
+                }
+                
+         }).average();
 
+         double salarioPromedio;
+
+         if (optionaldeSalario.isPresent())
+                salarioPromedio = optionaldeSalario.getAsDouble();
     }
 
 }
