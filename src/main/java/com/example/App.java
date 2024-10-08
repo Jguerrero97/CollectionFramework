@@ -343,32 +343,47 @@ public class App {
         * es decir, no utilizar las clase Filtro y Mapeador
         * 
          */
+        OptionalDouble optionaldeSalario = elementosVarios.stream()
+                .filter(new Predicate<Object>() {
+
+                    @Override
+                    public boolean test(Object obj) {
+
+                        return obj instanceof Empleado empleado
+                                && empleado.getGenero().equals(Genero.MUJER);
+
+                    }
+
+                }).mapToDouble(new ToDoubleFunction<Object>() {
+
+            @Override
+            public double applyAsDouble(Object obj) {
+                Empleado empleado = (Empleado) obj;
+                return empleado.getSalario();
+
+            }
+
+        }).average();
+
+        double salarioPromedio;
+
+        if (optionaldeSalario.isPresent()) {
+            salarioPromedio = optionaldeSalario.getAsDouble();
+        }
+
+        /*Sintaxis de las expresiones lambda:
+                         * https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html#syntax */
+        // Ejemplo
+        OptionalDouble optionalDeSalario = elementosVarios.stream()
+                .filter(o -> o instanceof Empleado empleado
+                && empleado.getGenero().equals(Genero.MUJER)
+                ).mapToDouble(obj -> {
+                    Empleado empleado = (Empleado) obj;
+                    return empleado.getSalario();
+                }
+                ).average();
         
-         OptionalDouble optionaldeSalario = elementosVarios.stream()
-         .filter(new Predicate<Object>() {
 
-                @Override
-                public boolean test(Object obj) {
-          
-                return obj instanceof  Empleado empleado && 
-                empleado.getGenero(). equals(Genero.MUJER) ;
-
-                }
-                
-         }).mapToDouble(new ToDoubleFunction<Object>() {
-
-                @Override
-                public double applyAsDouble(Object obj) {
-                        Empleado empleado = (Empleado) obj;
-                        return empleado.getSalario();
-                }
-                
-         }).average();
-
-         double salarioPromedio;
-
-         if (optionaldeSalario.isPresent())
-                salarioPromedio = optionaldeSalario.getAsDouble();
     }
 
 }
